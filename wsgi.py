@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
-""
-WSGI entry point для развертывания на продакшн сервере
-""
+# -*- coding: utf-8 -*-
+
 import os
-import sys
-
-# Добавляем путь к проекту в sys.path
-project_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, project_dir)
-
-# Импортируем приложение
-from app import app
+from app import app, db
 
 if __name__ == "__main__":
-    app.run() 
+    # Создаем таблицы, если их нет
+    with app.app_context():
+        db.create_all()
+    
+    # Запускаем приложение
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)), debug=False) 
